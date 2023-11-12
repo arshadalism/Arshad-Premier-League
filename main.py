@@ -46,5 +46,48 @@ async def get_players(team_name: str):
     return players
 
 
+@app.post("/match_fixture")
+async def match_fixture_route(request_data: schema.MatchFixtureRequest):
+    teams = request_data.team_list
+    response = await player_automation.match_fixture(teams)
+    return response
+
+
+@app.get("/matches_list")
+async def all_matches_list():
+    matches = await db.all_matches_list()
+    return matches
+
+
+@app.get("/team_matches_list")
+async def team_matches_list(team_name: str):
+    matches = await db.team_matches_list(team_name)
+    return matches
+
+
+@app.post("/match_winner")
+async def match_winner_declaration():
+    response = await player_automation.match_winner_result()
+    return response
+
+
+@app.get("/point_table")
+async def point_table():
+    response = await player_automation.point_table()
+    return response
+
+
+@app.post("/knockout_matches")
+async def knockout_matches_result():
+    response = await player_automation.knockout_matches()
+    return f"Congratulations {response} Champions!!!!"
+
+
+@app.get("/knockout_matches_table")
+async def knockout_matches_table():
+    matches_data = await db.knockout_matches_data()
+    return matches_data
+
+
 if __name__ == '__main__':
     uvicorn.run("main:app")

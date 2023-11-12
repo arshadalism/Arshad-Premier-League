@@ -8,11 +8,18 @@ players_details_col = database.get_collection("Players_details")
 team_details_col = database.get_collection("Team_details")
 player_pool_for_auction = database.get_collection("Available_players")
 match_fixture_col = database.get_collection("Match fixture")
+matches_result_col = database.get_collection("Matches result")
+knockout_matches_col = database.get_collection("Knockout matches")
 
 
 async def copy():
     document = await players_details_col.find({}).to_list(length=None)
     player_pool_for_auction.insert_many(document)
+
+
+async def copy1():
+    document = await match_fixture_col.find({}).to_list(length=None)
+    matches_result_col.insert_many(document)
 
 
 async def register_player(player_data: schema.Player_detail):
@@ -58,7 +65,21 @@ async def get_players(team_name: str):
     return players['player_list']
 
 
+async def all_matches_list():
+    matches = await match_fixture_col.find({}).sort("matchNo", 1).to_list(length=None)
+    return matches
+
+
+async def team_matches_list(team_name: str):
+    matches = await match_fixture_col.find({"$or": [{"team1": team_name}, {"team2": team_name}]}).sort("matchNo", 1).to_list(length=None)
+    return matches
+
+
+async def knockout_matches_data():
+    data = await knockout_matches_col.find({}).sort("matchNo", 1).to_list(length=None)
+    return data
+
+
+
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(copy())
-
-
+    asyncio.get_event_loop().run_until_complete(copy1())

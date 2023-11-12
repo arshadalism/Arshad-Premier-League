@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import List
 
 
 class Player_detail(BaseModel):
@@ -14,4 +14,14 @@ class Team_detail(BaseModel):
     player_list: list
 
 
+class Fixture_details(BaseModel):
+    _id: int
+    matchNo: int
+    team1: str
+    team2: str
+    venue: str
+    date: str
 
+
+class MatchFixtureRequest(BaseModel):
+    team_list: List[str]
