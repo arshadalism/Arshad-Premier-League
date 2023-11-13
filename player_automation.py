@@ -60,8 +60,8 @@ async def team_building(team_name: str):
         else:
             continue
         break
-    for player in team:
-        await db.player_pool_for_auction.delete_one({"_id": player['_id']})
+    player_ids = [player['_id'] for player in team]
+    await db.player_pool_for_auction.delete_many({"_id": {"$in": player_ids}})
 
     team_data = {
         "_id": random.randint(100, 999),
@@ -86,7 +86,6 @@ async def generate_fixtures(teams):
             match = (teams_copy[j], teams_copy[len(teams_copy) - 1 - j])
             round_fixtures.append(match)
         fixtures.extend(round_fixtures)
-
         teams_copy = [teams_copy[0]] + [teams_copy[-1]] + teams_copy[1: -1]
     return fixtures
 
@@ -95,7 +94,6 @@ async def match_fixture(team: List[str]):
     match_number = 1
     match_fixtures = []
     today_date = datetime.now().date()
-
     fixtures = await generate_fixtures(team)
 
     for match in fixtures:
@@ -120,7 +118,6 @@ async def match_winner_result():
     async for document in db.matches_result_col.find():
         winner = random.choice([document["team1"], document["team2"]])
         db.matches_result_col.update_one({'_id': document['_id']}, {"$set": {"winner": winner}})
-
     return {"message": 'Done successfully'}
 
 
@@ -165,7 +162,6 @@ async def knockout_matches():
         "winner": winner_semifinal_2
     }
     knockout_matches_list.append(semifinal_2)
-
     final = {
         "_id": random.randint(100, 999),
         "matchNo": league_matches + 3,

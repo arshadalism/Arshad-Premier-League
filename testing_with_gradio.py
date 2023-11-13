@@ -188,7 +188,6 @@ def format_data_as_matches_list(data):
 def get_all_matches_list():
     url = "http://127.0.0.1:8000/matches_list"
     response = requests.get(url)
-    print(response)
     if response.status_code == 200:
         data = response.json()
         matches_tabel = format_data_as_matches_list(data)
@@ -240,7 +239,7 @@ team_matches_list_interface = gradio.Interface(
 def format_data_as_point_table(data):
     if not data:
         return "No data available"
-    point_table_html = "<table><tr><th>Serial No</th><th>Team Name</th><th>Matches Played</th><th>Wins</th><th>Losses</th><th>Points</th></tr>"
+    point_table_html = "<table><tr><th>Position</th><th>Team Name</th><th>Matches Played</th><th>Wins</th><th>Losses</th><th>Points</th></tr>"
     sorted_teams = sorted(data.items(), key=lambda x: x[1], reverse=True)
     for i, (team, wins) in enumerate(sorted_teams, start=1):
         matches_played = 9
@@ -269,7 +268,8 @@ point_table_interface = gradio.Interface(
     fn=point_table,
     inputs=None,
     outputs="html",
-    title="Point Table"
+    title="Point Table",
+    theme="dark"
 )
 
 
@@ -342,5 +342,5 @@ gradio.TabbedInterface(
      team_details_interface, players_interface, match_fixture_creation_interface, get_all_matches_list_interface,
      team_matches_list_interface, point_table_interface, knockout_matches_interface, knockout_matches_interface_table],
     ["Player detail", "Player registration", "ALL Players Data", "Team building", "Team details", "Players",
-     "Match fixtures", "Matches List", "Team Matches List", "Point Table", "Knockout Matches", "Knockout Matches Data"]
+     "Match fixtures", "Matches List", "Team Matches List", "Point Table", "Knockout Matches", "Knockout Matches Data"], theme=gradio.themes.Soft()
 ).launch()
